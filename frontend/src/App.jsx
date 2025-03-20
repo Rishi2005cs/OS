@@ -1,8 +1,12 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Rishi from './components/Rishi/Rishi'
 
 const App = () => {
   return (
-    <div>App</div>
+    <Routes>
+      <Route path="/*" element={<Rishi />} />
+    </Routes>
   )
 }
 

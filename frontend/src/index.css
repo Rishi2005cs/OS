@@ -1,5 +1,8 @@
 @import "tailwindcss";
+@import "./styles/transitions.css";
 
 body {
   font-family: "DM Sans", sans-serif;
+  background-color: var(--background-light);
+  color: var(--text-primary);
 }
