@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import './DiskSchedulingHome.css';
 
 const DiskSchedulingHome = ({ algorithms, onAlgorithmSelect }) => {
   return (
@@ -26,25 +27,22 @@ const DiskSchedulingHome = ({ algorithms, onAlgorithmSelect }) => {
         {algorithms.map((algorithm) => (
           <motion.div
             key={algorithm.id}
-            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
+            className="algorithm-card"
             onClick={() => onAlgorithmSelect(algorithm.id)}
           >
-            <div className="p-6 cursor-pointer">
-              <h3 className="text-xl font-bold mb-2 text-blue-600">{algorithm.name}</h3>
-              <p className="text-gray-600 mb-4">{algorithm.description}</p>
-              <div className="flex justify-end">
-                <button 
-                  className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md transition-colors duration-300"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onAlgorithmSelect(algorithm.id);
-                  }}
-                >
-                  Learn More
-                </button>
-              </div>
+            <h3>{algorithm.name}</h3>
+            <p>{algorithm.description}</p>
+            <button 
+              className="learn-more-btn"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAlgorithmSelect(algorithm.id);
+              }}
+            >
+              Learn More
+            </button>
+            <div className="go-corner">
+              <div className="go-arrow">→</div>
             </div>
           </motion.div>
         ))}

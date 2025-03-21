@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { FaHome } from 'react-icons/fa';
 
 const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
   const [requests, setRequests] = useState([]);
@@ -8,6 +9,7 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
   const [maxTrack, setMaxTrack] = useState(199);
   const [results, setResults] = useState(null);
   const [isSimulating, setIsSimulating] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [simulationSpeed, setSimulationSpeed] = useState(1000); // ms per step
   const [simulationInterval, setSimulationInterval] = useState(null);
@@ -38,6 +40,7 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
     setInitialPosition(50);
     setResults(null);
     setIsSimulating(false);
+    setIsPaused(false);
     setCurrentStep(0);
     setSequence([]);
     setTotalSeekTime(0);
@@ -90,6 +93,12 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
   };
 
   const startSimulation = () => {
+    if (isPaused) {
+      setIsPaused(false);
+      continueSimulation();
+      return;
+    }
+
     setIsSimulating(true);
     const seq = calculateSequence();
     let step = 0;
@@ -99,6 +108,7 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
       if (step >= seq.length) {
         clearInterval(interval);
         setIsSimulating(false);
+        setIsPaused(false);
         return;
       }
 
@@ -133,6 +143,37 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
     setRequests(newRequests);
   };
 
+  const pauseSimulation = () => {
+    if (simulationInterval) {
+      clearInterval(simulationInterval);
+      setSimulationInterval(null);
+    }
+    setIsPaused(true);
+  };
+
+  const continueSimulation = () => {
+    const seq = sequence;
+    let step = currentStep;
+
+    const interval = setInterval(() => {
+      if (step >= seq.length) {
+        clearInterval(interval);
+        setIsSimulating(false);
+        setIsPaused(false);
+        return;
+      }
+
+      setCurrentStep(step);
+      const movement = Math.abs(currentPosition - seq[step]);
+      setStepMovement(movement);
+      setTotalMovement(prev => prev + movement);
+      setCurrentPosition(seq[step]);
+      step++;
+    }, simulationSpeed);
+
+    setSimulationInterval(interval);
+  };
+
   const handleRemoveRequest = (index) => {
     const newRequests = [...requests];
     newRequests.splice(index, 1);
@@ -149,14 +190,15 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
       <div className="flex justify-between mb-6">
         <button 
           onClick={onBackClick}
-          className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300"
+          className="flex items-center text-blue-600 border border-blue-600 px-4 py-2 rounded-md hover:bg-blue-600 hover:text-white transition-colors duration-300"
         >
           Back to Details
         </button>
         <button 
           onClick={onHomeClick}
-          className="flex items-center text-blue-600 hover:text-blue-800 transition-colors duration-300"
+          className="flex items-center text-blue-600 border border-blue-600 px-4 py-2 rounded-md hover:bg-blue-600 hover:text-white transition-colors duration-300"
         >
+          <FaHome className="mr-2" />
           Home
         </button>
       </div>
@@ -247,15 +289,21 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
           <div className="flex gap-2 mt-6">
             <button
               onClick={startSimulation}
-              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300 flex-1"
-              disabled={isSimulating || requests.length === 0}
+              className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300"
+              disabled={(!isPaused && isSimulating) || requests.length === 0}
             >
-              Start Simulation
+              {isPaused ? 'Continue' : 'Start Simulation'}
+            </button>
+            <button
+              onClick={pauseSimulation}
+              className="bg-yellow-600 text-white px-6 py-2 rounded-md hover:bg-yellow-700 transition-colors duration-300"
+              disabled={!isSimulating || isPaused}
+            >
+              Pause
             </button>
             <button
               onClick={resetSimulation}
               className="bg-gray-600 text-white px-6 py-2 rounded-md hover:bg-gray-700 transition-colors duration-300"
-              disabled={!isSimulating}
             >
               Reset
             </button>
