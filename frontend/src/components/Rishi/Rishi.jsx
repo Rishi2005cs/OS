@@ -81,19 +81,36 @@ const Rishi = () => {
   };
 
   return (
-    <div className="page-transition min-h-screen p-4" style={{ backgroundColor: 'var(--background-light)' }}>
+    <div className="page-transition min-h-screen p-4 flex flex-col" style={{ backgroundColor: 'var(--background-light)' }}>
       <header className="bg-gradient-to-r from-blue-600 to-blue-500 text-white p-6 rounded-lg shadow-lg mb-6 transition-all duration-300 hover:shadow-xl">
-        <h1 className="text-4xl font-bold mb-2">Disk Scheduling Algorithms</h1>
-        <p className="text-xl opacity-90">Learn and simulate different disk scheduling techniques</p>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Disk Scheduling Algorithms</h1>
+            <p className="text-xl opacity-90">Learn and simulate different disk scheduling techniques</p>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-3 mt-4">
+          {algorithms.map(algo => (
+            <button
+              key={algo.id}
+              onClick={() => handleAlgorithmSelect(algo.id)}
+              className="px-4 py-2 text-sm bg-white/10 text-white rounded-full hover:bg-white/20 transition-colors duration-300 backdrop-blur-sm border border-white/20"
+            >
+              {algo.name.split('(')[0].trim()}
+            </button>
+          ))}
+        </div>
       </header>
-
-      <div className="page-transition">
+  
+      <div className="page-transition flex-grow">
         <Routes>
           <Route path="/" element={<DiskSchedulingHome algorithms={algorithms} onAlgorithmSelect={handleAlgorithmSelect} />} />
           <Route path="/algorithm/:id" element={<AlgorithmDetailWrapper algorithms={algorithms} onBackClick={goToHome} onSimulateClick={goToSimulation} />} />
           <Route path="/simulation/:id" element={<SimulationWrapper algorithms={algorithms} onBackClick={goToDetail} onHomeClick={goToHome} />} />
         </Routes>
       </div>
+  
+
     </div>
   );
 };

@@ -187,20 +187,25 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
       transition={{ duration: 0.3 }}
       className="bg-white rounded-lg shadow-lg p-6"
     >
-      <div className="flex justify-between mb-6">
-        <button 
-          onClick={onBackClick}
-          className="flex items-center text-blue-600 border border-blue-600 px-4 py-2 rounded-md hover:bg-blue-600 hover:text-white transition-colors duration-300"
-        >
-          Back to Details
-        </button>
-        <button 
-          onClick={onHomeClick}
-          className="flex items-center text-blue-600 border border-blue-600 px-4 py-2 rounded-md hover:bg-blue-600 hover:text-white transition-colors duration-300"
-        >
-          <FaHome className="mr-2" />
-          Home
-        </button>
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex gap-3">
+          <button 
+            onClick={onBackClick}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+            </svg>
+            Back
+          </button>
+          <button 
+            onClick={onHomeClick}
+            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-md hover:shadow-lg"
+          >
+            <FaHome className="text-lg" />
+            Home
+          </button>
+        </div>
       </div>
 
       <h2 className="text-3xl font-bold text-blue-700 mb-4">{algorithm.name} Simulation</h2>
@@ -312,10 +317,20 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
 
         <div className="bg-gray-50 p-4 rounded-lg">
           <h3 className="text-xl font-semibold mb-4">Visualization</h3>
-          <div className="h-64 border rounded-lg p-4">
+          <div className="h-96 border rounded-lg p-4 mb-8">
             <div className="relative h-full">
               {/* Track visualization */}
               <div className="absolute w-full h-2 bg-gray-200 top-1/2 transform -translate-y-1/2"></div>
+              
+              {/* Number line */}
+              <div className="absolute w-full top-3/4 flex justify-between px-2 text-sm text-gray-600">
+                {[0, maxTrack/4, maxTrack/2, (3*maxTrack)/4, maxTrack].map((value) => (
+                  <div key={value} className="relative">
+                    <div className="absolute h-2 w-0.5 bg-gray-400 -top-2"></div>
+                    <span className="absolute -translate-x-1/2">{Math.round(value)}</span>
+                  </div>
+                ))}
+              </div>
               
               {/* Disk head */}
               <div 
@@ -337,6 +352,61 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
                   }}
                 ></div>
               ))}
+            </div>
+
+            {/* Media Controls */}
+            <div className="flex justify-center gap-4 mt-8 mb-6">
+              <button
+                onClick={() => {
+                  if (currentStep > 0) {
+                    setCurrentStep(prev => prev - 1);
+                    const prevPos = sequence[currentStep - 1] || initialPosition;
+                    const movement = Math.abs(currentPosition - prevPos);
+                    setCurrentPosition(prevPos);
+                    setStepMovement(movement);
+                    setTotalMovement(prev => prev - movement);
+                  }
+                }}
+                disabled={!isSimulating || currentStep === 0}
+                className="p-2 text-gray-600 hover:text-blue-600 disabled:text-gray-400 transition-colors duration-200 border border-gray-300 rounded-md hover:border-blue-600"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M11.28 15.7l-1.34 1.37L5 12l4.94-5.07 1.34 1.38-2.68 2.72H19v1.94H8.6l2.68 2.73z"/>
+                </svg>
+              </button>
+              <button
+                onClick={isPaused ? startSimulation : pauseSimulation}
+                disabled={!isSimulating}
+                className="p-2 text-gray-600 hover:text-blue-600 disabled:text-gray-400 transition-colors duration-200 border border-gray-300 rounded-md hover:border-blue-600"
+              >
+                {isPaused ? (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+                  </svg>
+                )}
+              </button>
+              <button
+                onClick={() => {
+                  if (currentStep < sequence.length - 1) {
+                    setCurrentStep(prev => prev + 1);
+                    const nextPos = sequence[currentStep + 1];
+                    const movement = Math.abs(currentPosition - nextPos);
+                    setCurrentPosition(nextPos);
+                    setStepMovement(movement);
+                    setTotalMovement(prev => prev + movement);
+                  }
+                }}
+                disabled={!isSimulating || currentStep >= sequence.length - 1}
+                className="p-2 text-gray-600 hover:text-blue-600 disabled:text-gray-400 transition-colors duration-200 border border-gray-300 rounded-md hover:border-blue-600"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12.72 15.7l2.68-2.73H5v-1.94h10.4l-2.68-2.72 1.34-1.38L19 12l-4.94 5.07-1.34-1.37z"/>
+                </svg>
+              </button>
             </div>
 
             {/* Statistics */}
