@@ -1,14 +1,9 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import './DiskSchedulingHome.css';
 
 const DiskSchedulingHome = ({ algorithms, onAlgorithmSelect }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div>
       <div className="mb-6">
         <h2 className="text-2xl font-bold mb-2">What is Disk Scheduling?</h2>
         <p className="text-gray-700 mb-4">
@@ -25,7 +20,7 @@ const DiskSchedulingHome = ({ algorithms, onAlgorithmSelect }) => {
       <h2 className="text-2xl font-bold mb-4">Disk Scheduling Algorithms</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {algorithms.map((algorithm) => (
-          <motion.div
+          <div
             key={algorithm.id}
             className="algorithm-card"
             onClick={() => onAlgorithmSelect(algorithm.id)}
@@ -44,10 +39,10 @@ const DiskSchedulingHome = ({ algorithms, onAlgorithmSelect }) => {
             <div className="go-corner">
               <div className="go-arrow">→</div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

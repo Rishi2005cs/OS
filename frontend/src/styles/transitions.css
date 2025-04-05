@@ -1,4 +1,4 @@
-/* Global transition styles */
+/* Global styles */
 :root {
   --primary-blue: #3b82f6;
   --primary-hover: #2563eb;
@@ -14,59 +14,12 @@
   font-size: var(--base-font-size);
 }
 
-/* Page transition animations */
-.page-enter {
-  opacity: 0;
-  transform: translateX(100%);
-}
-
-.page-enter-active {
-  opacity: 1;
-  transform: translateX(0);
-  transition: opacity 300ms, transform 300ms;
-}
-
-.page-exit {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.page-exit-active {
-  opacity: 0;
-  transform: translateX(-100%);
-  transition: opacity 300ms, transform 300ms;
-}
-
-/* Card hover animations */
-.card-hover {
+/* Card styles */
+.card {
   box-shadow: var(--shadow-sm);
 }
 
-/* Button animations */
-.button-transition {
-  transition: all 0.2s ease;
-}
-
-.button-transition:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-/* Fade animations */
-.fade-enter {
-  opacity: 0;
-}
-
-.fade-enter-active {
-  opacity: 1;
-  transition: opacity 300ms ease-in;
-}
-
-.fade-exit {
-  opacity: 1;
-}
-
-.fade-exit-active {
-  opacity: 0;
-  transition: opacity 300ms ease-in;
+/* Button styles */
+.button {
+  box-shadow: var(--shadow-sm);
 }

@@ -33,54 +33,158 @@ const AlgorithmDetail = ({ algorithm, onBackClick, onSimulateClick }) => {
       </div>
 
       <div className="mb-6">
-        <h3 className="text-xl font-semibold mb-2">Characteristics</h3>
-        <ul className="list-disc pl-5 text-gray-700">
+        <h3 className="text-xl font-semibold mb-2">Advantages</h3>
+        <ul className="list-disc pl-5 text-gray-700 mb-4">
           {algorithm.id === 'fcfs' && (
             <>
-              <li>Simple implementation</li>
-              <li>Fair in terms of order of arrival</li>
-              <li>High average seek time</li>
-              <li>No starvation</li>
+              <li>Simple and straightforward implementation</li>
+              <li>Fair in terms of order of arrival - no request starvation</li>
+              <li>Low CPU overhead</li>
+              <li>Good for systems with low disk I/O load</li>
             </>
           )}
           {algorithm.id === 'sstf' && (
             <>
-              <li>Reduces average seek time compared to FCFS</li>
-              <li>May cause starvation for requests far from current position</li>
-              <li>Not optimal for high load systems</li>
-              <li>Favors middle cylinders</li>
+              <li>Significantly reduces average seek time compared to FCFS</li>
+              <li>Provides high throughput</li>
+              <li>Good for systems with high disk I/O load</li>
+              <li>Optimal for systems with similar request patterns</li>
             </>
           )}
           {algorithm.id === 'scan' && (
             <>
-              <li>Also known as the elevator algorithm</li>
-              <li>Better performance than FCFS and SSTF</li>
-              <li>Prevents starvation</li>
-              <li>Favors requests close to the edges</li>
+              <li>Better performance than FCFS and SSTF in most cases</li>
+              <li>Prevents indefinite postponement of any request</li>
+              <li>Low variance in response time</li>
+              <li>Efficient for systems with high disk loads</li>
             </>
           )}
           {algorithm.id === 'cscan' && (
             <>
-              <li>Provides more uniform wait times than SCAN</li>
-              <li>Treats the disk as a circular list</li>
-              <li>Reduces maximum response time</li>
-              <li>More fair than SCAN</li>
+              <li>More uniform wait times compared to SCAN</li>
+              <li>Better response time distribution than SCAN</li>
+              <li>Treats all requests more fairly</li>
+              <li>Ideal for systems with heavy disk loads</li>
             </>
           )}
           {algorithm.id === 'look' && (
             <>
-              <li>Improved version of SCAN</li>
-              <li>Avoids unnecessary movement to the end of the disk</li>
-              <li>Better average seek time than SCAN</li>
-              <li>Still maintains fairness</li>
+              <li>More efficient than SCAN by avoiding unnecessary movements</li>
+              <li>Reduces average seek time compared to SCAN</li>
+              <li>Better overall disk utilization</li>
+              <li>Maintains fairness while improving performance</li>
             </>
           )}
           {algorithm.id === 'clook' && (
             <>
-              <li>Improved version of C-SCAN</li>
-              <li>Avoids unnecessary movement to the end of the disk</li>
-              <li>Better average seek time than C-SCAN</li>
-              <li>Maintains uniform wait times</li>
+              <li>Most efficient variant of SCAN family</li>
+              <li>Combines benefits of C-SCAN and LOOK</li>
+              <li>Excellent average response time</li>
+              <li>Best uniform wait time distribution</li>
+            </>
+          )}
+        </ul>
+
+        <h3 className="text-xl font-semibold mb-2">Disadvantages</h3>
+        <ul className="list-disc pl-5 text-gray-700 mb-4">
+          {algorithm.id === 'fcfs' && (
+            <>
+              <li>High average seek time</li>
+              <li>Poor performance with scattered requests</li>
+              <li>No optimization for seek time reduction</li>
+              <li>Not suitable for high-load systems</li>
+            </>
+          )}
+          {algorithm.id === 'sstf' && (
+            <>
+              <li>Can cause starvation of some requests</li>
+              <li>Overhead in calculating shortest seek time</li>
+              <li>Unpredictable waiting times</li>
+              <li>Not optimal for varying workloads</li>
+            </>
+          )}
+          {algorithm.id === 'scan' && (
+            <>
+              <li>Long waiting time for requests just visited</li>
+              <li>May not be optimal for light loads</li>
+              <li>Extra head movement to disk ends</li>
+              <li>Can cause uneven response times</li>
+            </>
+          )}
+          {algorithm.id === 'cscan' && (
+            <>
+              <li>Longer seek times than LOOK and C-LOOK</li>
+              <li>Extra overhead in moving to disk start</li>
+              <li>May be inefficient for light loads</li>
+              <li>Higher average seek time than SCAN</li>
+            </>
+          )}
+          {algorithm.id === 'look' && (
+            <>
+              <li>More complex implementation than SCAN</li>
+              <li>May not provide as uniform service as C-LOOK</li>
+              <li>Can still lead to some request starvation</li>
+              <li>Requires tracking of request ranges</li>
+            </>
+          )}
+          {algorithm.id === 'clook' && (
+            <>
+              <li>Most complex implementation in SCAN family</li>
+              <li>Higher overhead in tracking request ranges</li>
+              <li>May not be optimal for very light loads</li>
+              <li>Requires more sophisticated queue management</li>
+            </>
+          )}
+        </ul>
+
+        <h3 className="text-xl font-semibold mb-2">Comparison with Other Algorithms</h3>
+        <ul className="list-disc pl-5 text-gray-700">
+          {algorithm.id === 'fcfs' && (
+            <>
+              <li>Simplest but least efficient compared to other algorithms</li>
+              <li>Most fair in terms of order but worst in performance</li>
+              <li>SSTF, SCAN, and their variants all perform better</li>
+              <li>Only preferred in very light load situations</li>
+            </>
+          )}
+          {algorithm.id === 'sstf' && (
+            <>
+              <li>Better performance than FCFS but less fair</li>
+              <li>More efficient than FCFS but can cause starvation</li>
+              <li>SCAN family provides better fairness</li>
+              <li>Good middle ground between FCFS and SCAN</li>
+            </>
+          )}
+          {algorithm.id === 'scan' && (
+            <>
+              <li>More efficient than FCFS and SSTF</li>
+              <li>More fair than SSTF but less efficient than C-SCAN for uniform access</li>
+              <li>LOOK improves upon it by reducing unnecessary movements</li>
+              <li>Better overall balance of efficiency and fairness</li>
+            </>
+          )}
+          {algorithm.id === 'cscan' && (
+            <>
+              <li>More uniform service than SCAN</li>
+              <li>Better response time distribution than SCAN</li>
+              <li>C-LOOK improves upon it by reducing unnecessary movements</li>
+              <li>Best choice for heavy loads with uniform distribution</li>
+            </>
+          )}
+          {algorithm.id === 'look' && (
+            <>
+              <li>More efficient than SCAN with similar fairness</li>
+              <li>Better average performance than SCAN and SSTF</li>
+              <li>C-LOOK provides more uniform wait times</li>
+              <li>Good balance of efficiency and implementation complexity</li>
+            </>
+          )}
+          {algorithm.id === 'clook' && (
+            <>
+              <li>Most efficient among all disk scheduling algorithms</li>
+              <li>Better performance than C-SCAN with similar fairness</li>
+              <li>Combines best features of LOOK and C-SCAN</li>
+              <li>Optimal choice for most modern systems</li>
             </>
           )}
         </ul>
