@@ -57,12 +57,25 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
     let total = 0;
     let current = initialPosition;
 
+    const calculateSeekTime = (sequence) => {
+      let seekTime = 0;
+      let pos = initialPosition;
+      for (const nextPos of sequence) {
+        seekTime += Math.abs(nextPos - pos);
+        pos = nextPos;
+      }
+      return seekTime;
+    };
+
     switch (algorithm.id) {
       case 'fcfs':
         seq = [...requests];
+        total = calculateSeekTime(seq);
         break;
+
       case 'sstf':
         const remaining = [...requests];
+        current = initialPosition;
         while (remaining.length > 0) {
           const closest = remaining.reduce((prev, curr) => {
             return Math.abs(curr - current) < Math.abs(prev - current) ? curr : prev;
@@ -71,68 +84,106 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
           current = closest;
           remaining.splice(remaining.indexOf(closest), 1);
         }
+        total = calculateSeekTime(seq);
         break;
-      case 'scan':
-        const scanSorted = [...requests].sort((a, b) => a - b);
-        const scanHead = initialPosition;
-        if (direction === 'right') {
-          const greater = scanSorted.filter(x => x >= scanHead);
-          const lesser = scanSorted.filter(x => x < scanHead).reverse();
-          seq = [...greater, ...lesser];
-        } else {
-          const lesser = scanSorted.filter(x => x < scanHead);
-          const greater = scanSorted.filter(x => x >= scanHead).reverse();
-          seq = [...lesser, ...greater];
-        }
-        break;
-      case 'cscan':
-        const cscanSorted = [...requests].sort((a, b) => a - b);
-        const cscanHead = initialPosition;
-        if (direction === 'right') {
-          const greater = cscanSorted.filter(x => x >= cscanHead);
-          const lesser = cscanSorted.filter(x => x < cscanHead);
-          seq = [...greater, ...lesser];
-        } else {
-          const lesser = cscanSorted.filter(x => x < cscanHead);
-          const greater = cscanSorted.filter(x => x >= cscanHead);
-          seq = [...lesser, ...greater];
-        }
-        break;
+
+        case 'scan':
+          const scanSorted = [...requests].sort((a, b) => a - b);
+          if (direction === 'right') {
+            const greater = scanSorted.filter(x => x >= initialPosition);
+            const lesser = scanSorted.filter(x => x < initialPosition);
+            // Always move to maxTrack when going right
+            seq = [...greater];
+            if (greater.length === 0 || Math.max(...greater) < maxTrack) {
+              seq.push(maxTrack);
+            }
+            // Then reverse direction and handle lesser values
+            if (lesser.length > 0) {
+              seq = [...seq, ...lesser.reverse()];
+            }
+          } else {
+            const lesser = scanSorted.filter(x => x <= initialPosition).sort((a, b) => b - a); // Sort in reverse
+            const greater = scanSorted.filter(x => x > initialPosition);
+            // Always move to 0 when going left
+            seq = [...lesser];
+            if (lesser.length === 0 || Math.min(...lesser) > 0) {
+              seq.push(0);
+            }
+            // Then reverse direction and handle greater values
+            if (greater.length > 0) {
+              seq = [...seq, ...greater];
+            }
+          }
+          total = calculateSeekTime(seq);
+          break;
+        
+        case 'cscan':
+          const cscanSorted = [...requests].sort((a, b) => a - b);
+          if (direction === 'right') {
+            const greater = cscanSorted.filter(x => x >= initialPosition);
+            const lesser = cscanSorted.filter(x => x < initialPosition);
+            // Move right to the end, then jump to start
+            seq = [...greater];
+            // Always include maxTrack when going right
+            if (greater.length === 0 || Math.max(...greater) < maxTrack) {
+              seq.push(maxTrack);
+            }
+            // Always go to 0 after maxTrack
+            seq.push(0);
+            // Then handle lesser values
+            if (lesser.length > 0) {
+              seq = [...seq, ...lesser];
+            }
+          } else {
+            const lesser = cscanSorted.filter(x => x < initialPosition).sort((a, b) => b - a); // Sort in reverse
+            const greater = cscanSorted.filter(x => x >= initialPosition).sort((a, b) => b - a); // Sort in reverse
+            // Move left to the start, then jump to end
+            seq = [...lesser];
+            // Always include 0 when going left
+            if (lesser.length === 0 || Math.min(...lesser) > 0) {
+              seq.push(0);
+            }
+            // Always go to maxTrack after 0
+            seq.push(maxTrack);
+            // Then handle greater values in descending order
+            if (greater.length > 0) {
+              seq = [...seq, ...greater];
+            }
+          }
+          total = calculateSeekTime(seq);
+          break;
+
       case 'look':
         const lookSorted = [...requests].sort((a, b) => a - b);
-        const lookHead = initialPosition;
         if (direction === 'right') {
-          const greater = lookSorted.filter(x => x >= lookHead);
-          const lesser = lookSorted.filter(x => x < lookHead).reverse();
-          seq = [...greater, ...lesser];
+          const greater = lookSorted.filter(x => x >= initialPosition);
+          const lesser = lookSorted.filter(x => x < initialPosition);
+          seq = greater.length > 0 ? [...greater, ...lesser.reverse()] : [...lesser.reverse()];
         } else {
-          const lesser = lookSorted.filter(x => x < lookHead);
-          const greater = lookSorted.filter(x => x >= lookHead).reverse();
-          seq = [...lesser, ...greater];
+          const lesser = lookSorted.filter(x => x < initialPosition);
+          const greater = lookSorted.filter(x => x >= initialPosition);
+          seq = lesser.length > 0 ? [...lesser, ...greater.reverse()] : [...greater.reverse()];
         }
+        total = calculateSeekTime(seq);
         break;
+
       case 'clook':
         const clookSorted = [...requests].sort((a, b) => a - b);
-        const clookHead = initialPosition;
         if (direction === 'right') {
-          const greater = clookSorted.filter(x => x >= clookHead);
-          const lesser = clookSorted.filter(x => x < clookHead);
-          seq = [...greater, ...lesser];
+          const greater = clookSorted.filter(x => x >= initialPosition);
+          const lesser = clookSorted.filter(x => x < initialPosition);
+          seq = greater.length > 0 ? [...greater, ...lesser] : [...lesser];
         } else {
-          const lesser = clookSorted.filter(x => x < clookHead);
-          const greater = clookSorted.filter(x => x >= clookHead);
-          seq = [...lesser, ...greater];
+          const lesser = clookSorted.filter(x => x < initialPosition);
+          const greater = clookSorted.filter(x => x >= initialPosition);
+          seq = lesser.length > 0 ? [...lesser, ...greater] : [...greater];
         }
+        total = calculateSeekTime(seq);
         break;
+
       default:
         seq = [...requests];
-    }
-
-    // Calculate total seek time
-    let prev = initialPosition;
-    for (const pos of seq) {
-      total += Math.abs(pos - prev);
-      prev = pos;
+        total = calculateSeekTime(seq);
     }
 
     setSequence(seq);
@@ -150,7 +201,10 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
     setIsSimulating(true);
     const seq = calculateSequence();
     let step = 0;
+    let lastPosition = initialPosition;
     setCurrentPosition(initialPosition);
+    setTotalMovement(0);
+    setStepMovement(0);
 
     const interval = setInterval(() => {
       if (step >= seq.length) {
@@ -161,10 +215,11 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
       }
 
       setCurrentStep(step);
-      const movement = Math.abs(currentPosition - seq[step]);
+      const movement = Math.abs(seq[step] - lastPosition);
       setStepMovement(movement);
       setTotalMovement(prev => prev + movement);
       setCurrentPosition(seq[step]);
+      lastPosition = seq[step];
       step++;
     }, simulationSpeed);
 
