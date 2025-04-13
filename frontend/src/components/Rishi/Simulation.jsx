@@ -153,33 +153,33 @@ const Simulation = ({ algorithm, onBackClick, onHomeClick }) => {
           total = calculateSeekTime(seq);
           break;
 
-      case 'look':
-        const lookSorted = [...requests].sort((a, b) => a - b);
-        if (direction === 'right') {
-          const greater = lookSorted.filter(x => x >= initialPosition);
-          const lesser = lookSorted.filter(x => x < initialPosition);
-          seq = greater.length > 0 ? [...greater, ...lesser.reverse()] : [...lesser.reverse()];
-        } else {
-          const lesser = lookSorted.filter(x => x < initialPosition);
-          const greater = lookSorted.filter(x => x >= initialPosition);
-          seq = lesser.length > 0 ? [...lesser, ...greater.reverse()] : [...greater.reverse()];
-        }
-        total = calculateSeekTime(seq);
-        break;
-
-      case 'clook':
-        const clookSorted = [...requests].sort((a, b) => a - b);
-        if (direction === 'right') {
-          const greater = clookSorted.filter(x => x >= initialPosition);
-          const lesser = clookSorted.filter(x => x < initialPosition);
-          seq = greater.length > 0 ? [...greater, ...lesser] : [...lesser];
-        } else {
-          const lesser = clookSorted.filter(x => x < initialPosition);
-          const greater = clookSorted.filter(x => x >= initialPosition);
-          seq = lesser.length > 0 ? [...lesser, ...greater] : [...greater];
-        }
-        total = calculateSeekTime(seq);
-        break;
+          case 'look':
+    const lookSorted = [...requests].sort((a, b) => a - b);
+    if (direction === 'right') {
+        const greater = lookSorted.filter(x => x > initialPosition);
+        const lesser = lookSorted.filter(x => x <= initialPosition);
+        seq = greater.length > 0 ? [...greater, ...lesser.reverse()] : [...lesser.reverse()];
+    } else { // left direction
+        const lesser = lookSorted.filter(x => x < initialPosition).reverse();
+        const greater = lookSorted.filter(x => x >= initialPosition);
+        seq = lesser.length > 0 ? [...lesser, ...greater] : [...greater];
+    }
+    total = calculateSeekTime(seq);
+    break;
+        
+            case 'clook':
+              const clookSorted = [...requests].sort((a, b) => a - b);
+              if (direction === 'right') {
+                  const greater = clookSorted.filter(x => x > initialPosition);
+                  const lesser = clookSorted.filter(x => x <= initialPosition);
+                  seq = greater.length > 0 ? [...greater, ...lesser] : [...lesser];
+              } else { // left direction
+                  const lesser = clookSorted.filter(x => x < initialPosition).reverse();
+                  const greater = clookSorted.filter(x => x >= initialPosition).reverse();
+                  seq = lesser.length > 0 ? [...lesser, ...greater] : [...greater];
+              }
+              total = calculateSeekTime(seq);
+              break;
 
       default:
         seq = [...requests];
