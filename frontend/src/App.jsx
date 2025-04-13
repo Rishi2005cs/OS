@@ -1,11 +1,11 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import Rishi from './components/Rishi/Rishi'
+import DiskScheduling from './components/DiskScheduling/Disk_Scheduling'
 
 const App = () => {
   return (
     <Routes>
-      <Route path="/*" element={<Rishi />} />
+      <Route path="/*" element={<DiskScheduling />} />
     </Routes>
   )
 }

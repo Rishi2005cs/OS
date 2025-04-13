@@ -1,7 +1,7 @@
 import React from 'react';
-import './DiskSchedulingHome.css';
+import './Disk_Scheduling_Home.css';
 
-const DiskSchedulingHome = ({ algorithms, onAlgorithmSelect }) => {
+const Disk_Scheduling_Home = ({ algorithms, onAlgorithmSelect }) => {
   return (
     <div>
       <div className="mb-6">
@@ -46,4 +46,4 @@ const DiskSchedulingHome = ({ algorithms, onAlgorithmSelect }) => {
   );
 };
 
-export default DiskSchedulingHome;
+export default Disk_Scheduling_Home;

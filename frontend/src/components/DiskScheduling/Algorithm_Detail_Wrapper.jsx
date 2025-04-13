@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import AlgorithmDetail from './AlgorithmDetail';
+import Algorithm_Detail from './Algorithm_Detail';
 
-const AlgorithmDetailWrapper = ({ algorithms, onBackClick, onSimulateClick }) => {
+const Algorithm_Detail_Wrapper = ({ algorithms, onBackClick, onSimulateClick }) => {
   const { id } = useParams();
   const algorithm = algorithms.find(algo => algo.id === id);
 
@@ -11,7 +11,7 @@ const AlgorithmDetailWrapper = ({ algorithms, onBackClick, onSimulateClick }) =>
   }
 
   return (
-    <AlgorithmDetail
+    <Algorithm_Detail
       algorithm={algorithm}
       onBackClick={onBackClick}
       onSimulateClick={() => onSimulateClick(algorithm.id)}
@@ -19,4 +19,4 @@ const AlgorithmDetailWrapper = ({ algorithms, onBackClick, onSimulateClick }) =>
   );
 };
 
-export default AlgorithmDetailWrapper;
+export default Algorithm_Detail_Wrapper;

@@ -2,22 +2,23 @@ import React from 'react';
 import { Routes, Route, useNavigate, useParams } from 'react-router-dom';
 
 // Wrapper components to handle routing parameters
-const AlgorithmDetailWrapper = ({ algorithms, onBackClick, onSimulateClick }) => {
+const Algorithm_Detail_Wrapper = ({ algorithms, onBackClick, onSimulateClick }) => {
   const { id } = useParams();
   const algorithm = algorithms.find(algo => algo.id === id);
-  return <AlgorithmDetail algorithm={algorithm} onBackClick={onBackClick} onSimulateClick={() => onSimulateClick(id)} />;
+  return <Algorithm_Detail algorithm={algorithm} onBackClick={onBackClick} onSimulateClick={() => onSimulateClick(id)} />;
 };
 
-const SimulationWrapper = ({ algorithms, onBackClick, onHomeClick }) => {
+const Simulation_Wrapper = ({ algorithms, onBackClick, onHomeClick }) => {
   const { id } = useParams();
   const algorithm = algorithms.find(algo => algo.id === id);
   return <Simulation algorithm={algorithm} onBackClick={() => onBackClick(id)} onHomeClick={onHomeClick} />;
 };
-import DiskSchedulingHome from './DiskSchedulingHome';
-import AlgorithmDetail from './AlgorithmDetail';
+
+import Disk_Scheduling_Home from './Disk_Scheduling_Home';
+import Algorithm_Detail from './Algorithm_Detail';
 import Simulation from './Simulation';
 
-const Rishi = () => {
+const DiskScheduling = () => {
   const navigate = useNavigate();
 
   // List of disk scheduling algorithms
@@ -104,15 +105,13 @@ const Rishi = () => {
   
       <div className="page-transition flex-grow">
         <Routes>
-          <Route path="/" element={<DiskSchedulingHome algorithms={algorithms} onAlgorithmSelect={handleAlgorithmSelect} />} />
-          <Route path="/algorithm/:id" element={<AlgorithmDetailWrapper algorithms={algorithms} onBackClick={goToHome} onSimulateClick={goToSimulation} />} />
-          <Route path="/simulation/:id" element={<SimulationWrapper algorithms={algorithms} onBackClick={goToDetail} onHomeClick={goToHome} />} />
+          <Route path="/" element={<Disk_Scheduling_Home algorithms={algorithms} onAlgorithmSelect={handleAlgorithmSelect} />} />
+          <Route path="/algorithm/:id" element={<Algorithm_Detail_Wrapper algorithms={algorithms} onBackClick={goToHome} onSimulateClick={goToSimulation} />} />
+          <Route path="/simulation/:id" element={<Simulation_Wrapper algorithms={algorithms} onBackClick={goToDetail} onHomeClick={goToHome} />} />
         </Routes>
       </div>
-  
-
     </div>
   );
 };
 
-export default Rishi;
+export default DiskScheduling;
